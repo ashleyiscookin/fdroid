@@ -11,4 +11,11 @@
 #     asset: 'release\.apk$'
 #     keep: 2
 
-apps: []
+apps:
+  - repo: ashleyiscookin/parla
+    asset: '^parla-.*\.apk$'
+  - repo: ashleyiscookin/kleinanzeigen-alarm
+    asset: '^kleinanzeigen-alarm-.*\.apk$'
+  - repo: ashleyiscookin/jiggolo   # RaoPe, rolling pre-release tag "latest"
+    asset: '^raope\.apk$'
+    prerelease: true

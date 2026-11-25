@@ -6,16 +6,15 @@
 #   keep:       how many of the newest releases to publish (default: 1)
 #   prerelease: also take pre-releases (default: false)
 #
-# Example:
-#   - repo: ashleyiscookin/someapp
-#     asset: 'release\.apk$'
-#     keep: 2
+# The source repos (parla, kleinanzeigen-alarm, jiggolo) are private and the
+# workflow token cannot read them, so their APKs are mirrored as releases of
+# this repo by scripts/mirror_releases.sh (run on a machine logged in with gh).
+# Once a SOURCE_TOKEN secret exists, these can point at the source repos again.
 
 apps:
-  - repo: ashleyiscookin/parla
+  - repo: ashleyiscookin/fdroid
     asset: '^parla-.*\.apk$'
-  - repo: ashleyiscookin/kleinanzeigen-alarm
+  - repo: ashleyiscookin/fdroid
     asset: '^kleinanzeigen-alarm-.*\.apk$'
-  - repo: ashleyiscookin/jiggolo   # RaoPe, rolling pre-release tag "latest"
+  - repo: ashleyiscookin/fdroid
     asset: '^raope\.apk$'
-    prerelease: true

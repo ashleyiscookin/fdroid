@@ -1,0 +1,77 @@
+name: Publish F-Droid repo
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 4 * * *" # daily
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install fdroidserver and apksigner
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q apksigner
+          pip install fdroidserver==2.4.6
+
+      - name: Write signing keystore
+        env:
+          FDROID_KEYSTORE: ${{ secrets.FDROID_KEYSTORE }}
+        run: |
+          if [ -z "$FDROID_KEYSTORE" ]; then
+            echo "::error::Secret FDROID_KEYSTORE is not set"; exit 1
+          fi
+          umask 077
+          echo "$FDROID_KEYSTORE" | base64 -d > keystore.p12
+          chmod 600 config.yml
+
+      - name: Download APKs from GitHub Releases
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SOURCE_TOKEN: ${{ secrets.SOURCE_TOKEN }}
+        run: python scripts/fetch_apks.py
+
+      - name: Build and sign index
+        env:
+          FDROID_KEYSTORE_PASS: ${{ secrets.FDROID_KEYSTORE_PASS }}
+        run: |
+          fdroid update --create-metadata --pretty
+          rm -f keystore.p12
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          cp -r repo _site/repo
+          echo '<meta http-equiv="refresh" content="0; url=repo/">' > _site/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

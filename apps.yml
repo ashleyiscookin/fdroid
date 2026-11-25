@@ -1,0 +1,14 @@
+# Apps published in this F-Droid repo.
+#
+# Each entry pulls signed APKs from a GitHub repo's Releases.
+#   repo:       owner/name of the GitHub repo (required)
+#   asset:      regex the APK file name must match (default: '\.apk$')
+#   keep:       how many of the newest releases to publish (default: 1)
+#   prerelease: also take pre-releases (default: false)
+#
+# Example:
+#   - repo: ashleyiscookin/someapp
+#     asset: 'release\.apk$'
+#     keep: 2
+
+apps: []

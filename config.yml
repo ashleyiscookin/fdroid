@@ -1,0 +1,14 @@
+# fdroidserver config. No secrets in here: passwords come from the
+# environment, the keystore is written from a GitHub Actions secret at runtime.
+repo_url: https://ashleyiscookin.github.io/fdroid/repo
+repo_name: ash's apps
+repo_description: >-
+  Apps by ash, pulled from their GitHub Releases.
+
+archive_older: 0
+
+repo_keyalias: fdroid
+keystore: keystore.p12
+keystorepass: {env: FDROID_KEYSTORE_PASS}
+keypass: {env: FDROID_KEYSTORE_PASS}
+keydname: CN=fdroid, O=ash
